@@ -67,10 +67,25 @@ describe('HeroDetail Component', () => {
       fixture.detectChanges();
       const heroLiElement = fixture.debugElement.nativeElement.querySelectorAll('li')[0];
       heroLiElement.click();
-      let des = fixture.debugElement.queryAll(By.css('h2'));
+      fixture.detectChanges();
+      let des = fixture.debugElement.queryAll(By.css('h3'));
       expect(des.length).toEqual(1);
     });
   }));
+
+  it('When select Hero at the top is called, h2 element should have "MR. NICE is my hero".', async(() => {
+    fixture.detectChanges(); // THIS IS IMPORTANT!!
+    fixture.whenStable().then(() => {
+      fixture.detectChanges();
+      const heroLiElement = fixture.debugElement.nativeElement.querySelectorAll('li')[0];
+      heroLiElement.click();
+      fixture.detectChanges();
+      let des = fixture.debugElement.query(By.css('h3'));
+      let el = des.nativeElement;
+      expect(el.textContent).toContain('MR. NICE is my hero');
+    });
+  }));
+
 
   it('When click View Details button, current view should go to ', async(() => {
 
