@@ -61,8 +61,15 @@ describe('HeroDetail Component', () => {
     });
   }));
 
-  it('When select Hero at the top, h2 element should appear.', async(() => {
-    
+  it('When select Hero at the top is called, h2 element should appear.', async(() => {
+    fixture.detectChanges(); // THIS IS IMPORTANT!!
+    fixture.whenStable().then(() => {
+      fixture.detectChanges();
+      const heroLiElement = fixture.debugElement.nativeElement.querySelectorAll('li')[0];
+      heroLiElement.click();
+      let des = fixture.debugElement.queryAll(By.css('h2'));
+      expect(des.length).toEqual(1);
+    });
   }));
 
   it('When click View Details button, current view should go to ', async(() => {
