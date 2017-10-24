@@ -7,12 +7,19 @@ import { DebugElement } from '@angular/core';
 import { HEROES} from './mock-heroes';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
+import { HeroDetailComponent } from './hero-detail.component';
+import { Router } from '@angular/router';
 
 describe('HeroDetail Component', () => {
   let service: HeroService;
+  let router: Router;
   let comp: HeroesComponent;
   let fixture: ComponentFixture<HeroesComponent>;
   let de: DebugElement;
+
+  // let routerStub = {
+  //   navigate: jasmine.createSpy('navigate')
+  // };
 
   beforeEach(async(() => {
     // HeroServiceStub
@@ -22,15 +29,21 @@ describe('HeroDetail Component', () => {
       }
     };
 
+    // RouterStub
+    let routerStub = {
+      navigate: jasmine.createSpy('navigate')
+    };
+  
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule],
+      imports: [ RouterTestingModule ],
       declarations: [ HeroesComponent ]
     }).
     // override component configuration
     overrideComponent(HeroesComponent, {
       set: {
         providers: [
-          { provide: HeroService, useValue: serviceStub}
+          { provide: HeroService, useValue: serviceStub},
+          { provide: Router, useValue: routerStub}
         ]
       }
     });
@@ -41,6 +54,7 @@ describe('HeroDetail Component', () => {
 
     // get Dependency Service
     service = fixture.debugElement.injector.get(HeroService);
+    router = fixture.debugElement.injector.get(Router);
   }));
 
 
@@ -86,8 +100,46 @@ describe('HeroDetail Component', () => {
     });
   }));
 
+  it('When click View Details button, navigate is called.', async(() => {
+    fixture.detectChanges(); // THIS IS IMPORTANT!!
+    fixture.whenStable().then(() => {
 
-  it('When click View Details button, current view should go to ', async(() => {
+      // create selected Element div *ngIf="selectedHero">
+      fixture.detectChanges();
+      const heroLiElement = fixture.debugElement.nativeElement.querySelectorAll('li')[0];
+      heroLiElement.click();
 
-  }));    
+      // show h3 selected Hero
+      fixture.detectChanges();
+      const selectedHeroButton = fixture.debugElement.nativeElement.querySelectorAll('button')[0];
+      selectedHeroButton.click();
+
+      // click gotoDetail
+      fixture.detectChanges();
+      // comp.gotoDetail();
+      expect(router.navigate).toHaveBeenCalled();
+    });
+  }));
+
+  it('When click View Details button, link should be detail/11', async(() => {
+    fixture.detectChanges(); // THIS IS IMPORTANT!!
+    fixture.whenStable().then(() => {
+
+      // create selected Element div *ngIf="selectedHero">
+      fixture.detectChanges();
+      const heroLiElement = fixture.debugElement.nativeElement.querySelectorAll('li')[0];
+      heroLiElement.click();
+
+      // show h3 selected Hero
+      fixture.detectChanges();
+      const selectedHeroButton = fixture.debugElement.nativeElement.querySelectorAll('button')[0];
+      selectedHeroButton.click();
+
+      // click gotoDetail
+      fixture.detectChanges();
+      // comp.gotoDetail();
+      expect(router.navigate).toHaveBeenCalledWith(['/detail', 11]);
+    });
+  }));
+
 });
